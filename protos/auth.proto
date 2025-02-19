@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package auth;
+
+// Сервис для авторизации
+service AuthService {
+  // Метод для входа пользователя
+  rpc Login (LoginRequest) returns (LoginResponse);
+}
+
+// Запрос для входа
+message LoginRequest {
+  string login = 1;    // Логин пользователя
+  string password = 2; // Пароль пользователя
+}
+
+// Ответ на запрос входа
+message LoginResponse {
+  bool success = 1;    // Успешность авторизации
+  string message = 2;  // Сообщение (например, ошибка)
+  string user_id = 3;  // ID пользователя
+  string first_name = 4; // Имя пользователя
+  string last_name = 5;  // Фамилия пользователя
+  string group = 6;      // Группа пользователя
+}
