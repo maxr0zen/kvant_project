@@ -4,9 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Панель управления</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .dashboard {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .block {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .block h2 {
+            margin-top: 0;
+        }
+        .task {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+        .task h3 {
+            margin: 0;
+        }
+        .task p {
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
-    <h1>Добро пожаловать!</h1>
-    <p>Вы успешно авторизовались.</p>
+    <div class="dashboard">
+        <h1>Добро пожаловать!</h1>
+        <p>Вы успешно авторизовались. Вот список доступных заданий:</p>
+
+        {% for block in blocks %}
+        <div class="block">
+            <h2>{{ block.block_name }}</h2>
+            {% for task in block.tasks %}
+            <div class="task">
+                <h3>{{ task.task_name }}</h3>
+                <p>{{ task.task_description }}</p>
+                <a href="/task/{{ block.block_id }}/{{ task.task_id }}">Перейти к заданию</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
 </body>
 </html>
