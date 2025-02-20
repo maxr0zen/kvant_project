@@ -4,53 +4,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Панель управления</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animate.css для анимаций -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #6c757d;
+            --background-color: #f5f7fa;
+        }
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            background: linear-gradient(135deg, var(--background-color) 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            padding-top: 50px;
+            padding-bottom: 50px;
         }
         .dashboard {
-            max-width: 800px;
-            margin: 0 auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 30px;
         }
-        .block {
-            border: 1px solid #ccc;
+        .dashboard-header {
+            background-color: var(--primary-color);
+            color: white;
+            margin: -30px -30px 30px;
+            padding: 20px 30px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        .task-column {
+            background-color: #f8f9fa;
+            border-radius: 10px;
             padding: 20px;
             margin-bottom: 20px;
-            border-radius: 5px;
+            transition: all 0.3s ease;
         }
-        .block h2 {
-            margin-top: 0;
+        .task-column:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .task-column h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
         .task {
-            margin-left: 20px;
-            margin-bottom: 10px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .task:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         .task h3 {
-            margin: 0;
+            color: var(--primary-color);
+            font-size: 1.1em;
+            margin-bottom: 10px;
         }
-        .task p {
-            margin: 5px 0;
+        .task-link {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        .task-link:hover {
+            background-color: #3a7bd5;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .task-column {
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <h1>Добро пожаловать!</h1>
-        <p>Вы успешно авторизовались. Вот список доступных заданий:</p>
-
-        {% for block in blocks %}
-        <div class="block">
-            <h2>{{ block.block_name }}</h2>
-            {% for task in block.tasks %}
-            <div class="task">
-                <h3>{{ task.task_name }}</h3>
-                <p>{{ task.task_description }}</p>
-                <a href="/task/{{ block.block_id }}/{{ task.task_id }}">Перейти к заданию</a>
+    <div class="container">
+        <div class="dashboard animate__animated animate__fadeIn">
+            <div class="dashboard-header">
+                <h1 class="mb-0">Добро пожаловать!</h1>
             </div>
-            {% endfor %}
+            <p class="lead text-muted">Вы успешно авторизовались. Вот список доступных заданий:</p>
+
+            <div class="row">
+                <!-- Не начатые задания -->
+                <div class="col-md-4">
+                    <div class="task-column">
+                        <h2>Не начатые</h2>
+                        {% for task in not_started %}
+                        <div class="task">
+                            <h3>{{ task.block_name }}</h3>
+                            <p>{{ task.task_name }}</p>
+                            <p class="text-muted small">{{ task.task_description }}</p>
+                            <a href="/task/{{ task.block_id }}/{{ task.task_id }}" class="task-link">Начать</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Задания в процессе выполнения -->
+                <div class="col-md-4">
+                    <div class="task-column">
+                        <h2>В процессе</h2>
+                        {% for task in in_progress %}
+                        <div class="task">
+                            <h3>{{ task.block_name }}</h3>
+                            <p>{{ task.task_name }}</p>
+                            <p class="text-muted small">{{ task.task_description }}</p>
+                            <a href="/task/{{ task.block_id }}/{{ task.task_id }}" class="task-link">Продолжить</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Завершённые задания -->
+                <div class="col-md-4">
+                    <div class="task-column">
+                        <h2>Завершённые</h2>
+                        {% for task in completed %}
+                        <div class="task">
+                            <h3>{{ task.block_name }}</h3>
+                            <p>{{ task.task_name }}</p>
+                            <p class="text-muted small">{{ task.task_description }}</p>
+                            <a href="/task/{{ task.block_id }}/{{ task.task_id }}" class="task-link">Просмотр</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
-        {% endfor %}
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

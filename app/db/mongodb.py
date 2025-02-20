@@ -1,4 +1,5 @@
 # app/db/mongodb.py
+import datetime
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from app.core.config import settings
@@ -8,6 +9,8 @@ try:
     client = MongoClient(settings.MONGO_URI)
     db = client[settings.MONGO_DB_NAME]
     collection = db['users']  # Коллекция пользователей
+    user_progress_collection = db["user_progress"]
+
     print("Connected to MongoDB successfully!")
 except ConnectionFailure as e:
     print(f"Could not connect to MongoDB: {e}")
@@ -52,3 +55,30 @@ def delete_user(user_id: str):
     """
     result = collection.delete_one({"_id": user_id})
     return result.deleted_count
+
+def update_user_progress(login: str, block_id: int, task_id: int, status: str):
+    """
+    Обновляет или создает запись о прогрессе пользователя.
+    """
+    user_progress_collection.update_one(
+        {"login": login, "block_id": block_id, "task_id": task_id},
+        {
+            "$set": {
+                "status": status
+            }
+        },
+        upsert=True  # Создать запись, если она не существует
+    )
+
+def get_user_progress(login: str, block_id: int = None, task_id: int = None):
+    """
+    Получает прогресс пользователя.
+    Если block_id и task_id не указаны, возвращает весь прогресс пользователя.
+    """
+    query = {"login": login}
+    if block_id:
+        query["block_id"] = block_id
+    if task_id:
+        query["task_id"] = task_id
+    
+    return list(user_progress_collection.find(query))
