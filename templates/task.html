@@ -8,81 +8,277 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Animate.css для анимаций -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- CodeMirror для улучшенного редактора кода -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
     <style>
         :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #6c757d;
-            --background-color: #f5f7fa;
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --text-color: #2b2d42;
+            --light-bg: rgba(248, 249, 250, 0.95);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
         }
+
         body {
-            background: linear-gradient(135deg, var(--background-color) 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             min-height: 100vh;
-            font-family: 'Arial', sans-serif;
-            padding-top: 50px;
-            padding-bottom: 50px;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text-color);
+            padding: 2rem 1rem;
         }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
         .task-container {
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            padding: 30px;
+            background: var(--light-bg);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
         }
+
         .task-header {
-            background-color: var(--primary-color);
-            color: white;
-            margin: -30px -30px 30px;
-            padding: 20px 30px;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
+            padding: 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .task-header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 0.5rem;
         }
-        .code-editor {
-            border: 1px solid #ced4da;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .CodeMirror {
-            height: 300px !important;
-            border-radius: 10px;
-        }
-        .test-case {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .submit-btn {
-            background-color: var(--primary-color);
-            border: none;
-            transition: all 0.3s ease;
-        }
-        .submit-btn:hover {
-            background-color: #3a7bd5;
-            transform: translateY(-3px);
-        }
+
         .navigation-btn {
+            margin-top: 1rem;
             display: flex;
-            gap: 10px;
+            gap: 0.75rem;
+            flex-wrap: wrap;
         }
-        .task-result {
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .task-content {
+            padding: 2rem;
+        }
+
+        .task-description {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(67, 97, 238, 0.1);
+            transition: var(--transition);
+        }
+
+        .task-description:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+
+        .task-description h2 {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .task-description p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .code-editor {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            border: 2px solid rgba(67, 97, 238, 0.1);
+            transition: var(--transition);
+        }
+
+        .code-editor:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+
+        .CodeMirror {
+            height: 400px !important;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            justify-content: center;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .test-cases {
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .test-case {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(67, 97, 238, 0.1);
+            transition: var(--transition);
+        }
+
+        .test-case:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+
+        .test-case h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .test-case pre {
+            background: var(--light-bg);
             border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
+            padding: 1rem;
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            overflow-x: auto;
         }
-        .task-result.success {
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            color: #155724;
+
+        .results {
+            margin-top: 2rem;
         }
-        .task-result.error {
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
+
+        .accordion-button {
+            background: white;
+            border-radius: 15px !important;
+            padding: 1.25rem;
+            font-weight: 600;
+            border: 2px solid rgba(67, 97, 238, 0.1);
+            margin-bottom: 0.5rem;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: var(--primary-color);
+            background: white;
+            border-color: var(--primary-color);
+        }
+
+        .accordion-body {
+            background: white;
+            border-radius: 0 0 15px 15px;
+            padding: 1.25rem;
+        }
+
+        .superuser-actions {
+            margin: 1.5rem 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, var(--warning-color), #f1c40f);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, var(--danger-color), #c0392b);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .task-header {
+                padding: 1.5rem;
+            }
+
+            .task-content {
+                padding: 1.5rem;
+            }
+
+            .navigation-btn {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .CodeMirror {
+                height: 300px !important;
+            }
         }
     </style>
 </head>
@@ -90,61 +286,132 @@
     <div class="container">
         <div class="task-container animate__animated animate__fadeIn">
             <div class="task-header">
-                <h1 class="mb-0">{{ block_name }} - {{ task_name }}</h1>
+                <h1>
+                    <i class="fas fa-tasks me-2"></i>
+                    {{ block_name }} - {{ task_name }}
+                </h1>
                 <div class="navigation-btn">
                     {% if prev_task %}
-                    <a href="/task/{{ prev_task.block_id }}/{{ prev_task.task_id }}" class="btn btn-outline-light">
-                        <i class="bi bi-arrow-left"></i> Предыдущее задание
+                    <a href="/task/{{ prev_task.block_id }}/{{ prev_task.task_id }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> 
+                        Предыдущее задание
                     </a>
                     {% endif %}
                     {% if next_task %}
-                    <a href="/task/{{ next_task.block_id }}/{{ next_task.task_id }}" class="btn btn-outline-light">
-                        Следующее задание <i class="bi bi-arrow-right"></i>
+                    <a href="/task/{{ next_task.block_id }}/{{ next_task.task_id }}" class="btn btn-outline-primary">
+                        Следующее задание 
+                        <i class="fas fa-arrow-right"></i>
                     </a>
                     {% endif %}
-                    <a href="/dashboard" class="btn btn-outline-light">
-                        <i class="bi bi-house"></i> Панель управления
+                    <a href="/dashboard" class="btn btn-outline-primary">
+                        <i class="fas fa-home"></i>
+                        К заданиям
                     </a>
                 </div>
             </div>
 
-            <p class="lead text-muted">{{ task_description }}</p>
-
-            <form method="post" id="taskForm">
-                <input type="hidden" name="login" value="{{ login }}">
-                <div class="code-editor">
-                    <textarea name="code" id="code-editor" placeholder="Введите ваш код здесь">{{ code if code else '' }}</textarea>
+            <div class="task-content">
+                <div class="task-description">
+                    <h2 class="h5 mb-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Описание задачи
+                    </h2>
+                    <p class="mb-0">{{ task_description }}</p>
                 </div>
-                <button type="submit" class="btn submit-btn btn-lg w-100">Отправить решение</button>
-            </form>
 
-            <div class="test-cases mt-4">
-                <h2 class="mb-3">Тест-кейсы:</h2>
-                {% for test_case in test_cases %}
-                <div class="test-case">
-                    <h3>Входные данные:</h3>
-                    <pre class="bg-light p-2 rounded">{{ test_case.input }}</pre>
-                    <h3>Ожидаемый вывод:</h3>
-                    <pre class="bg-light p-2 rounded">{{ test_case.expected_output }}</pre>
+                <!-- Кнопки для superuser -->
+                {% if is_superuser %}
+                <div class="superuser-actions">
+                    <a href="/task/{{ block_id }}/{{ task_id }}/edit" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> 
+                        Редактировать
+                    </a>
+                    <form action="/task/{{ block_id }}/{{ task_id }}/delete" method="post" onsubmit="return confirm('Вы уверены, что хотите удалить это задание?');">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i>
+                            Удалить
+                        </button>
+                    </form>
                 </div>
-                {% endfor %}
+                {% endif %}
+
+                <form method="post" id="taskForm" data-block-id="{{ block_id }}" data-task-id="{{ task_id }}">
+                    <input type="hidden" name="login" value="{{ login }}">
+                    <div class="code-editor">
+                        <textarea name="code" id="code-editor" placeholder="Введите ваш код здесь">{{ code if code else '' }}</textarea>
+                    </div>
+                    <button type="submit" class="btn submit-btn btn-lg">
+                        <i class="fas fa-paper-plane"></i>
+                        Отправить решение
+                    </button>
+                </form>
+
+                <div class="test-cases">
+                    <h2 class="section-title">
+                        <i class="fas fa-vial me-2"></i>
+                        Тест-кейсы
+                    </h2>
+                    {% for test_case in test_cases %}
+                    <div class="test-case">
+                        <h3>
+                            <i class="fas fa-input me-2"></i>
+                            Входные данные:
+                        </h3>
+                        <pre>{{ test_case.input }}</pre>
+                        <h3>
+                            <i class="fas fa-output me-2"></i>
+                            Ожидаемый вывод:
+                        </h3>
+                        <pre>{{ test_case.expected_output }}</pre>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if results %}
+                <div class="results">
+                    <h2 class="section-title">
+                        <i class="fas fa-clipboard-check me-2"></i>
+                        Результаты тестирования
+                    </h2>
+                    <div class="accordion" id="resultsAccordion">
+                        {% for result in results %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="heading{{ loop.index }}">
+                                <button class="accordion-button {% if not result.passed %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="{% if result.passed %}true{% else %}false{% endif %}" aria-controls="collapse{{ loop.index }}">
+                                    <span class="me-2">
+                                        {% if result.passed %}
+                                            <i class="fas fa-check-circle text-success"></i>
+                                        {% else %}
+                                            <i class="fas fa-times-circle text-danger"></i>
+                                        {% endif %}
+                                    </span>
+                                    {{ result.message }}
+                                </button>
+                            </h2>
+                            <div id="collapse{{ loop.index }}" class="accordion-collapse collapse {% if result.passed %}show{% endif %}" aria-labelledby="heading{{ loop.index }}" data-bs-parent="#resultsAccordion">
+                                <div class="accordion-body">
+                                    {% if test_cases and test_cases[loop.index0] %}
+                                        <p><strong>Входные данные:</strong> {{ test_cases[loop.index0].input }}</p>
+                                        <p><strong>Ожидаемый вывод:</strong> {{ test_cases[loop.index0].expected_output }}</p>
+                                    {% else %}
+                                        <p><strong>Входные данные:</strong> Недоступно</p>
+                                        <p><strong>Ожидаемый вывод:</strong> Недоступно</p>
+                                    {% endif %}
+                                    <p><strong>Полученный вывод:</strong> {{ result.message.split('!=')[0].split(': ')[-1] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
-
-            {% if results %}
-            <div class="results mt-4">
-                <h2 class="mb-3">Результаты тестирования:</h2>
-                {% for result in results %}
-                <div class="task-result {% if 'пройден' in result %}success{% else %}error{% endif %}">
-                    {{ result }}
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
         </div>
     </div>
 
-    <!-- Библиотеки -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- CodeMirror -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
     <script>
@@ -159,6 +426,7 @@
                 indentUnit: 4,
                 tabSize: 4,
                 indentWithTabs: false,
+                lineWrapping: true,
             });
         
             // Автосохранение кода в localStorage
@@ -190,7 +458,7 @@
                 localStorage.setItem(`${localStorageKey}_cursor`, JSON.stringify(cursorPosition));
             });
         
-            // ОбработкаSubmit формы с валидацией
+            // Обработка Submit формы с валидацией
             taskForm.addEventListener('submit', (e) => {
                 const code = editor.getValue().trim();
                 
@@ -199,26 +467,6 @@
                     alert('Пожалуйста, введите код перед отправкой.');
                 }
             });
-        
-            // Кнопки навигации
-            const prevTaskBtn = document.getElementById('prev-task-btn');
-            const nextTaskBtn = document.getElementById('next-task-btn');
-            const dashboardBtn = document.getElementById('dashboard-btn');
-        
-            // Добавление подтверждения при смене задания
-            function confirmTaskChange(e) {
-                const unsavedChanges = localStorage.getItem(localStorageKey) !== editor.getValue();
-                if (unsavedChanges) {
-                    const confirmLeave = confirm('У вас есть несохраненные изменения. Уйти без сохранения?');
-                    if (!confirmLeave) {
-                        e.preventDefault();
-                    }
-                }
-            }
-        
-            if (prevTaskBtn) prevTaskBtn.addEventListener('click', confirmTaskChange);
-            if (nextTaskBtn) nextTaskBtn.addEventListener('click', confirmTaskChange);
-            if (dashboardBtn) dashboardBtn.addEventListener('click', confirmTaskChange);
         
             // Предупреждение о закрытии страницы с несохраненными изменениями
             window.addEventListener('beforeunload', (e) => {
@@ -229,4 +477,6 @@
                 }
             });
         });
- </script>
+    </script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование задания - {{ task_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --text-color: #2b2d42;
+            --light-bg: rgba(248, 249, 250, 0.95);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text-color);
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .edit-task-container {
+            background: var(--light-bg);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .edit-task-header {
+            padding: 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .edit-task-header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .edit-task-content {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-control {
+            border: 2px solid rgba(67, 97, 238, 0.1);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+
+        .test-case {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid rgba(67, 97, 238, 0.1);
+            transition: var(--transition);
+        }
+
+        .test-case:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+
+        .test-case h5 {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(63, 55, 201, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, var(--danger-color), #c0392b);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .test-case-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .edit-task-header {
+                padding: 1.5rem;
+            }
+
+            .edit-task-content {
+                padding: 1.5rem;
+            }
+
+            .test-case-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="edit-task-container animate__animated animate__fadeIn">
+            <div class="edit-task-header">
+                <h1>
+                    <i class="fas fa-edit me-2"></i>
+                    Редактирование задания: {{ task_name }}
+                </h1>
+            </div>
+
+            <div class="edit-task-content">
+                <form action="/task/{{ block_id }}/{{ task_id }}/edit" method="post">
+                    <div class="form-group">
+                        <label for="task_name">
+                            <i class="fas fa-heading me-2"></i>
+                            Название задания:
+                        </label>
+                        <input type="text" id="task_name" name="task_name" class="form-control" value="{{ task_name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="task_description">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Описание задания:
+                        </label>
+                        <textarea id="task_description" name="task_description" class="form-control" rows="4" required>{{ task_description }}</textarea>
+                    </div>
+
+                    <div id="testCasesContainer">
+                        {% for test_case in test_cases %}
+                        <div class="test-case">
+                            <h5>
+                                <i class="fas fa-vial me-2"></i>
+                                Тест-кейс {{ loop.index }}
+                            </h5>
+                            <div class="form-group">
+                                <label for="input{{ loop.index }}">
+                                    <i class="fas fa-input me-2"></i>
+                                    Входные данные:
+                                </label>
+                                <textarea id="input{{ loop.index }}" name="input" class="form-control" rows="3" required>{{ test_case.input }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="output{{ loop.index }}">
+                                    <i class="fas fa-output me-2"></i>
+                                    Ожидаемые выходные данные:
+                                </label>
+                                <textarea id="output{{ loop.index }}" name="output" class="form-control" rows="3" required>{{ test_case.expected_output }}</textarea>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="test-case-actions">
+                        <button type="button" id="addTestCaseBtn" class="btn btn-secondary">
+                            <i class="fas fa-plus"></i>
+                            Добавить тест-кейс
+                        </button>
+                        <button type="button" id="removeTestCaseBtn" class="btn btn-danger">
+                            <i class="fas fa-minus"></i>
+                            Удалить тест-кейс
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Сохранить изменения
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let testCaseCount = {{ test_cases|length }};
+
+        document.getElementById('addTestCaseBtn').addEventListener('click', function () {
+            testCaseCount++;
+            const testCaseHTML = `
+                <div class="test-case">
+                    <h5>
+                        <i class="fas fa-vial me-2"></i>
+                        Тест-кейс ${testCaseCount}
+                    </h5>
+                    <div class="form-group">
+                        <label for="input${testCaseCount}">
+                            <i class="fas fa-input me-2"></i>
+                            Входные данные:
+                        </label>
+                        <textarea id="input${testCaseCount}" name="input" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="output${testCaseCount}">
+                            <i class="fas fa-output me-2"></i>
+                            Ожидаемые выходные данные:
+                        </label>
+                        <textarea id="output${testCaseCount}" name="output" class="form-control" rows="3" required></textarea>
+                    </div>
+                </div>
+            `;
+            document.getElementById('testCasesContainer').insertAdjacentHTML('beforeend', testCaseHTML);
+        });
+
+        document.getElementById('removeTestCaseBtn').addEventListener('click', function () {
+            if (testCaseCount > 1) {
+                const testCasesContainer = document.getElementById('testCasesContainer');
+                testCasesContainer.removeChild(testCasesContainer.lastElementChild);
+                testCaseCount--;
+            }
+        });
+    </script>
+</body>
+</html>

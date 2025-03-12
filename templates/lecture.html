@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ lecture.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --text-color: #2b2d42;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text-color);
+            padding: 2rem 1rem;
+        }
+
+        .lecture-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .lecture-header {
+            background: white;
+            padding: 2rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .lecture-header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .lecture-content {
+            padding: 2rem;
+        }
+
+        .content-block {
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-block.text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .content-block.code {
+            background: #2d2d2d;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .content-block.code pre {
+            margin: 0;
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+        }
+
+        .content-block.image {
+            text-align: center;
+            margin: 2rem 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .content-block.image img {
+            max-width: 100%;
+            max-height: 400px;
+            width: auto;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            object-fit: contain;
+        }
+
+        .content-block.image img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-caption {
+            margin-top: 1rem;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .lecture-header {
+                padding: 1.5rem;
+            }
+
+            .lecture-content {
+                padding: 1.5rem;
+            }
+
+            .content-block.image {
+                max-width: 100%;
+            }
+
+            .content-block.image img {
+                max-height: 300px;
+            }
+        }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .image-modal img {
+            max-width: 80%;
+            max-height: 80vh;
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            object-fit: contain;
+        }
+
+        .python-compiler {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .python-compiler h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        #editor {
+            height: 300px;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(0,0,0,0.1);
+        }
+
+        #output {
+            background: #2d2d2d;
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            font-family: 'Fira Code', monospace;
+            min-height: 100px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .btn-run {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-run:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-back {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            transform: translateX(-5px);
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="lecture-container animate__animated animate__fadeIn">
+        <div class="lecture-header">
+            <a href="/dashboard" class="btn-back mb-3">
+                <i class="fas fa-arrow-left"></i>
+                Вернуться к списку лекций
+            </a>
+            <h1>{{ lecture.title }}</h1>
+        </div>
+
+        <div class="lecture-content">
+            {% for block in lecture.content_blocks %}
+                {% if block.type == 'text' %}
+                    <div class="content-block text">
+                        {{ block.content | safe }}
+                    </div>
+                {% elif block.type == 'code' %}
+                    <div class="content-block code">
+                        <pre><code class="language-python">{{ block.content }}</code></pre>
+                    </div>
+                {% elif block.type == 'image' %}
+                    <div class="content-block image">
+                        <img src="{{ block.content }}" alt="Изображение из лекции" onclick="openImageModal(this.src)">
+                        {% if block.caption %}
+                            <div class="image-caption">{{ block.caption }}</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="python-compiler">
+                <h3>
+                    <i class="fab fa-python me-2"></i>
+                    Python компилятор
+                </h3>
+                <div id="editor">print("Привет, мир!")</div>
+                <button class="btn-run" onclick="runCode()">
+                    <i class="fas fa-play me-2"></i>
+                    Запустить код
+                </button>
+                <div id="output"></div>
+            </div>
+
+            <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+                <img id="modalImage" src="" alt="Увеличенное изображение">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.0/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        // Инициализация Ace editor
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/python");
+        editor.setFontSize(14);
+
+        // Функция для запуска кода
+        async function runCode() {
+            const code = editor.getValue();
+            const output = document.getElementById('output');
+            output.innerHTML = '<span style="color: #4361ee;">Выполняется...</span>';
+
+            try {
+                const response = await fetch('/run_python', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ code: code })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Ошибка сервера');
+                }
+
+                const data = await response.json();
+                if (data.error) {
+                    output.innerHTML = `<span style="color: #ff6b6b;">${data.error}</span>`;
+                } else {
+                    // Если вывод пустой, показываем специальное сообщение
+                    const outputText = data.output || 'Код выполнен успешно (нет вывода)';
+                    output.innerHTML = `<pre style="margin: 0; white-space: pre-wrap;">${outputText}</pre>`;
+                }
+            } catch (error) {
+                output.innerHTML = `<span style="color: #ff6b6b;">Ошибка выполнения: ${error.message}</span>`;
+            }
+        }
+
+        // Подсветка синтаксиса для блоков кода
+        Prism.highlightAll();
+
+        // Функция для открытия модального окна с изображением
+        function openImageModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = src;
+        }
+
+        // Функция для закрытия модального окна
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

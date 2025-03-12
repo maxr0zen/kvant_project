@@ -10,6 +10,10 @@ try:
     db = client[settings.MONGO_DB_NAME]
     collection = db['users']  # Коллекция пользователей
     user_progress_collection = db["user_progress"]
+    blocks_collection = db["blocks"]
+    user_progress_collection = db["user_progress"]
+    lectures_collection = db["lectures"]
+    
 
     print("Connected to MongoDB successfully!")
 except ConnectionFailure as e:
@@ -82,3 +86,69 @@ def get_user_progress(login: str, block_id: int = None, task_id: int = None):
         query["task_id"] = task_id
     
     return list(user_progress_collection.find(query))
+
+def generate_task_id():
+    # Генерация уникального ID для задания
+    last_task = blocks_collection.find_one(
+        {},
+        {"tasks": {"$slice": -1}},  # Получаем последнее задание
+        sort=[("tasks.task_id", -1)]  # Сортируем по task_id в порядке убывания
+    )
+    if last_task and "tasks" in last_task and last_task["tasks"]:
+        return last_task["tasks"][-1]["task_id"] + 1
+    return 1  # Если заданий нет, начинаем с 1
+
+def generate_block_id():
+    # Генерация уникального ID для блока
+    last_block = blocks_collection.find_one(
+        {},
+        sort=[("block_id", -1)]  # Сортируем по block_id в порядке убывания
+    )
+    if last_block:
+        return last_block["block_id"] + 1
+    return 1  # Если блоков нет, начинаем с 1
+
+def generate_lecture_id():
+    last_lecture = lectures_collection.find_one({}, sort=[("lecture_id", -1)])
+    if last_lecture:
+        return last_lecture["lecture_id"] + 1
+    return 1
+
+async def add_lecture(title: str, content: str, code_snippets: list = None):
+    if code_snippets is None:
+        code_snippets = []
+    
+    lecture = {
+        "lecture_id": generate_lecture_id(),
+        "title": title,
+        "content": content,
+        "code_snippets": code_snippets
+    }
+    lectures_collection.insert_one(lecture)
+    return lecture
+    
+def get_lecture_by_id(lecture_id: int):
+    return lectures_collection.find_one({"lecture_id": lecture_id})
+
+def update_lecture(lecture_id: int, title: str = None, content: str = None, code_snippets: list = None):
+    update_data = {"updated_at": datetime.utcnow()}
+    
+    if title:
+        update_data["title"] = title
+    if content:
+        update_data["content"] = content
+    if code_snippets:
+        update_data["code_snippets"] = code_snippets
+    
+    lectures_collection.update_one(
+        {"lecture_id": lecture_id},
+        {"$set": update_data}
+    )
+    return lectures_collection.find_one({"lecture_id": lecture_id})
+
+def delete_lecture(lecture_id: int):
+    result = lectures_collection.delete_one({"lecture_id": lecture_id})
+    return result.deleted_count > 0  # Возвращает True, если лекция была удалена
+
+def get_all_lectures():
+    return list(lectures_collection.find({}))

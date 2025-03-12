@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать лекцию: {{ lecture.title }}</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Animate.css для анимаций -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Prism.js для подсветки синтаксиса -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --text-color: #2b2d42;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text-color);
+            padding: 40px 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .lecture-container {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .lecture-header {
+            background: transparent;
+            border-bottom: none;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .lecture-header h1 {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .form-content {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+        }
+
+        .content-block {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .content-block:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .block-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .block-controls .btn {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+        }
+
+        .block-type-selector {
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        .block-type-selector .form-control {
+            max-width: 200px;
+        }
+
+        .block-content {
+            margin-top: 10px;
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #ff4d5a);
+            border: none;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(45deg, #ff4d5a, #dc3545);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .error-message {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .form-content {
+                padding: 1.5rem;
+            }
+
+            .lecture-header {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Кнопка "Назад" -->
+    <a href="/dashboard" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+        Назад
+    </a>
+
+    <div class="container">
+        <div class="lecture-container animate__animated animate__fadeIn">
+            <!-- Шапка -->
+            <div class="lecture-header">
+                <h1>
+                    <i class="fas fa-edit me-2"></i>
+                    Редактировать лекцию
+                </h1>
+            </div>
+
+            {% if error_message %}
+            <div class="error-message mx-4">
+                {{ error_message }}
+            </div>
+            {% endif %}
+
+            <!-- Форма редактирования лекции -->
+            <div class="form-content">
+                <form id="editLectureForm" method="post" action="/lecture/{{ lecture.lecture_id }}/edit">
+                    <!-- Добавляем поле для заголовка -->
+                    <div class="form-group mb-4">
+                        <label for="title">
+                            <i class="fas fa-heading me-2"></i>
+                            Заголовок лекции
+                        </label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ lecture.title }}" required>
+                    </div>
+
+                    <div id="contentBlocks">
+                        {% for block in lecture.content_blocks %}
+                        <div class="content-block">
+                            <div class="block-header">
+                                <div class="block-type-selector">
+                                    <select class="form-control content-type" required>
+                                        <option value="text" {% if block.type == 'text' %}selected{% endif %}>Текст</option>
+                                        <option value="code" {% if block.type == 'code' %}selected{% endif %}>Код</option>
+                                        <option value="image" {% if block.type == 'image' %}selected{% endif %}>Изображение</option>
+                                    </select>
+                                </div>
+                                <div class="block-controls">
+                                    <button type="button" class="btn btn-secondary btn-sm move-block-up">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-sm move-block-down">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm delete-block">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="block-content">
+                                {% if block.type == 'code' %}
+                                <textarea class="form-control content mb-2" rows="5" required>{{ block.content }}</textarea>
+                                <select class="form-control code-type">
+                                    <option value="python" {% if block.language == 'python' %}selected{% endif %}>Python</option>
+                                </select>
+                                {% else %}
+                                <textarea class="form-control content" rows="3" required>{{ block.content }}</textarea>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <input type="hidden" name="content_type" id="contentTypeData">
+                    <input type="hidden" name="content" id="contentData">
+                    <input type="hidden" name="code_type" id="codeTypeData">
+
+                    <div class="d-flex gap-3 mt-4">
+                        <button type="button" id="addTextBlock" class="btn btn-secondary">
+                            <i class="fas fa-plus"></i>
+                            Добавить текст
+                        </button>
+                        <button type="button" id="addCodeBlock" class="btn btn-secondary">
+                            <i class="fas fa-code"></i>
+                            Добавить код
+                        </button>
+                        <button type="button" id="addImageBlock" class="btn btn-secondary">
+                            <i class="fas fa-image"></i>
+                            Добавить изображение
+                        </button>
+                        <button type="submit" class="btn btn-primary ms-auto">
+                            <i class="fas fa-save"></i>
+                            Сохранить изменения
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js для подсветки синтаксиса -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('editLectureForm');
+            const contentBlocks = document.getElementById('contentBlocks');
+
+            // Функция создания нового блока
+            function createContentBlock(type) {
+                const block = document.createElement('div');
+                block.className = 'content-block animate__animated animate__fadeIn';
+                
+                const header = `
+                    <div class="block-header">
+                        <div class="block-type-selector">
+                            <select class="form-control content-type" required>
+                                <option value="text" ${type === 'text' ? 'selected' : ''}>Текст</option>
+                                <option value="code" ${type === 'code' ? 'selected' : ''}>Код</option>
+                                <option value="image" ${type === 'image' ? 'selected' : ''}>Изображение</option>
+                            </select>
+                        </div>
+                        <div class="block-controls">
+                            <button type="button" class="btn btn-secondary btn-sm move-block-up">
+                                <i class="fas fa-arrow-up"></i>
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm move-block-down">
+                                <i class="fas fa-arrow-down"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm delete-block">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>`;
+
+                let content = '';
+                if (type === 'code') {
+                    content = `
+                        <div class="block-content">
+                            <textarea class="form-control content mb-2" rows="5" required></textarea>
+                            <select class="form-control code-type">
+                                <option value="python">Python</option>
+                            </select>
+                        </div>`;
+                } else {
+                    content = `
+                        <div class="block-content">
+                            <textarea class="form-control content" rows="3" required></textarea>
+                        </div>`;
+                }
+
+                block.innerHTML = header + content;
+                return block;
+            }
+
+            // Обработчики для кнопок добавления блоков
+            document.getElementById('addTextBlock').addEventListener('click', () => {
+                contentBlocks.appendChild(createContentBlock('text'));
+            });
+
+            document.getElementById('addCodeBlock').addEventListener('click', () => {
+                contentBlocks.appendChild(createContentBlock('code'));
+            });
+
+            document.getElementById('addImageBlock').addEventListener('click', () => {
+                contentBlocks.appendChild(createContentBlock('image'));
+            });
+
+            // Делегирование событий для динамических элементов
+            contentBlocks.addEventListener('click', function(e) {
+                if (e.target.closest('.delete-block')) {
+                    const block = e.target.closest('.content-block');
+                    block.classList.add('animate__fadeOut');
+                    setTimeout(() => block.remove(), 500);
+                }
+                
+                if (e.target.closest('.move-block-up')) {
+                    const block = e.target.closest('.content-block');
+                    if (block.previousElementSibling) {
+                        block.parentNode.insertBefore(block, block.previousElementSibling);
+                    }
+                }
+                
+                if (e.target.closest('.move-block-down')) {
+                    const block = e.target.closest('.content-block');
+                    if (block.nextElementSibling) {
+                        block.parentNode.insertBefore(block.nextElementSibling, block);
+                    }
+                }
+            });
+
+            // Обработка изменения типа контента
+            contentBlocks.addEventListener('change', function(e) {
+                if (e.target.classList.contains('content-type')) {
+                    const block = e.target.closest('.content-block');
+                    const contentDiv = block.querySelector('.block-content');
+                    const type = e.target.value;
+                    
+                    if (type === 'code') {
+                        contentDiv.innerHTML = `
+                            <textarea class="form-control content mb-2" rows="5" required></textarea>
+                            <select class="form-control code-type">
+                                <option value="python">Python</option>
+                            </select>`;
+                    } else {
+                        contentDiv.innerHTML = `
+                            <textarea class="form-control content" rows="3" required></textarea>`;
+                    }
+                }
+            });
+
+            // Обработка отправки формы
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const blocks = Array.from(contentBlocks.children);
+                const contentTypes = [];
+                const contents = [];
+                const codeTypes = [];
+                
+                blocks.forEach(block => {
+                    const type = block.querySelector('.content-type').value;
+                    contentTypes.push(type);
+                    
+                    const content = block.querySelector('.content').value;
+                    contents.push(content);
+                    
+                    if (type === 'code') {
+                        const codeType = block.querySelector('.code-type').value;
+                        codeTypes.push(codeType);
+                    }
+                });
+                
+                document.getElementById('contentTypeData').value = JSON.stringify(contentTypes);
+                document.getElementById('contentData').value = JSON.stringify(contents);
+                document.getElementById('codeTypeData').value = JSON.stringify(codeTypes);
+                
+                form.submit();
+            });
+        });
+    </script>
+</body>
+</html>

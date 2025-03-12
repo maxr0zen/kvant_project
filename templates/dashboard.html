@@ -8,138 +8,450 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Animate.css для анимаций -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #6c757d;
-            --background-color: #f5f7fa;
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --text-color: #2b2d42;
+            --light-bg: #f8f9fa;
         }
+
         body {
-            background: linear-gradient(135deg, var(--background-color) 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
             min-height: 100vh;
-            font-family: 'Arial', sans-serif;
-            padding-top: 50px;
-            padding-bottom: 50px;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text-color);
+            padding: 40px 0;
         }
-        .dashboard {
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            padding: 30px;
-        }
-        .dashboard-header {
-            background-color: var(--primary-color);
-            color: white;
-            margin: -30px -30px 30px;
-            padding: 20px 30px;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
-        }
-        .task-column {
-            background-color: #f8f9fa;
-            border-radius: 10px;
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
         }
-        .task-column:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            overflow: hidden;
         }
-        .task-column h2 {
+
+        .card-header {
+            background: transparent;
+            border-bottom: none;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card-header h1 {
             color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 2rem;
+            margin: 0;
         }
-        .task {
-            background-color: white;
-            border-radius: 10px;
-            padding: 15px;
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-header {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-header:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 160px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .settings-btn:hover, .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 30px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+
+        .accordion-button {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            background: var(--light-bg);
+            border: 2px solid #e9ecef;
+            border-radius: 12px !important;
+            margin-bottom: 10px;
+            padding: 15px 20px;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: var(--primary-color);
+            background: white;
+            border-color: var(--primary-color);
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: var(--primary-color);
+        }
+
+        .accordion-body {
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .task, .lecture {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 20px;
             margin-bottom: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 2px solid #e9ecef;
             transition: all 0.3s ease;
         }
-        .task:hover {
-            transform: scale(1.02);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+        .task:hover, .lecture:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
         }
-        .task h3 {
+
+        .task h3, .lecture h3 {
             color: var(--primary-color);
-            font-size: 1.1em;
+            font-size: 1.2rem;
+            font-weight: 600;
             margin-bottom: 10px;
         }
-        .task-link {
-            background-color: var(--primary-color);
+
+        .task-link, .lecture-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
             color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
+            padding: 8px 16px;
+            border-radius: 12px;
             text-decoration: none;
-            display: inline-block;
-            transition: background-color 0.2s;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
-        .task-link:hover {
-            background-color: #3a7bd5;
+
+        .task-link:hover, .lecture-link:hover {
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
         }
+
+        .badge {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .task-actions {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .lecture-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(67, 97, 238, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .lecture-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+
+        .lecture-card h3 {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .lecture-card p {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .lecture-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .lecture-actions .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
         @media (max-width: 768px) {
-            .task-column {
-                margin-bottom: 20px;
+            .dashboard-container {
+                padding: 10px;
+            }
+            
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .card-header {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn-group {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn-group .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                top: 10px;
+                right: 10px;
+            }
+
+            .lecture-actions {
+                flex-direction: column;
+            }
+            
+            .lecture-actions .btn {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="dashboard animate__animated animate__fadeIn">
-            <div class="dashboard-header">
-                <h1 class="mb-0">Добро пожаловать!</h1>
+    <a href="/settings" class="settings-btn">
+        <i class="fas fa-user-cog"></i>
+        Настройки
+    </a>
+    <a href="/" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i>
+        Выйти
+    </a>
+
+    <div class="container dashboard-container">
+        <div class="card animate__animated animate__fadeInUp">
+            <!-- Шапка -->
+            <div class="card-header">
+                <h1>
+                    <i class="fas fa-user-circle me-2"></i>
+                    Добро пожаловать, {{ user.last_name }}!
+                </h1>
+                {% if user.group == "superuser" %}
+                <div class="btn-group">
+                    <a href="/students" class="btn btn-header">
+                        <i class="fas fa-users"></i>
+                        Просмотр данных учеников
+                    </a>
+                    <a href="/add_task_page" class="btn btn-header">
+                        <i class="fas fa-tasks"></i>
+                        Добавить задание
+                    </a>
+                    <a href="/add_student_page" class="btn btn-header">
+                        <i class="fas fa-user-plus"></i>
+                        Добавление учеников
+                    </a>
+                    <a href="/add_lecture_page" class="btn btn-header">
+                        <i class="fas fa-book"></i>
+                        Добавить лекцию
+                    </a>
+                </div>
+                {% endif %}
             </div>
-            <p class="lead text-muted">Вы успешно авторизовались. Вот список доступных заданий:</p>
 
-            <div class="row">
-                <!-- Не начатые задания -->
-                <div class="col-md-4">
-                    <div class="task-column">
-                        <h2>Не начатые</h2>
-                        {% for task in not_started %}
-                        <div class="task">
-                            <h3>{{ task.block_name }}</h3>
-                            <p>{{ task.task_name }}</p>
-                            <p class="text-muted small">{{ task.task_description }}</p>
-                            <a href="/task/{{ task.block_id }}/{{ task.task_id }}" class="task-link">Начать</a>
-                        </div>
-                        {% endfor %}
+            <div class="card-body">
+                <p class="lead text-muted mb-4">Вот список доступных заданий и лекций:</p>
+
+                <!-- Две колонки: лекции и задания -->
+                <div class="row">
+                    <!-- Колонка для лекций -->
+                    <div class="col-md-6">
+                        <h2 class="section-title">
+                            <i class="fas fa-book-reader"></i>
+                            Лекции
+                        </h2>
+                        {% if lectures %}
+                            {% for lecture in lectures %}
+                            <div class="lecture-card">
+                                <h3>{{ lecture.title }}</h3>
+                                <p class="text-muted small">
+                                    {% set text_block = lecture.content_blocks|selectattr("type", "equalto", "text")|first %}
+                                    {% if text_block %}
+                                        {{ text_block.content[:100] }}...
+                                    {% else %}
+                                        Предпросмотр недоступен
+                                    {% endif %}
+                                </p>
+                                <div class="lecture-actions">
+                                    <a href="/lecture/{{ lecture.lecture_id }}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-book-reader me-1"></i>
+                                        Читать
+                                    </a>
+                                    {% if user.group == "superuser" %}
+                                    <a href="/lecture/{{ lecture.lecture_id }}/edit" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-edit me-1"></i>
+                                        Редактировать
+                                    </a>
+                                    <form action="/lecture/{{ lecture.lecture_id }}/delete" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Вы уверены, что хотите удалить эту лекцию?')">
+                                            <i class="fas fa-trash me-1"></i>
+                                            Удалить
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Лекции пока отсутствуют.
+                            </div>
+                        {% endif %}
                     </div>
-                </div>
 
-                <!-- Задания в процессе выполнения -->
-                <div class="col-md-4">
-                    <div class="task-column">
-                        <h2>В процессе</h2>
-                        {% for task in in_progress %}
-                        <div class="task">
-                            <h3>{{ task.block_name }}</h3>
-                            <p>{{ task.task_name }}</p>
-                            <p class="text-muted small">{{ task.task_description }}</p>
-                            <a href="/task/{{ task.block_id }}/{{ task.task_id }}" class="task-link">Продолжить</a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
+                    <!-- Колонка для практических заданий -->
+                    <div class="col-md-6">
+                        <h2 class="section-title">
+                            <i class="fas fa-code"></i>
+                            Практические задания
+                        </h2>
+                        <div class="accordion" id="tasksAccordion">
+                            {% set blocks = {} %}
+                            {% for task in not_started + in_progress + completed %}
+                                {% if task.block_name not in blocks %}
+                                    {% set _ = blocks.update({task.block_name: {'tasks': [], 'block_id': task.block_id}}) %}
+                                {% endif %}
+                                {% set _ = blocks[task.block_name]['tasks'].append(task) %}
+                            {% endfor %}
 
-                <!-- Завершённые задания -->
-                <div class="col-md-4">
-                    <div class="task-column">
-                        <h2>Завершённые</h2>
-                        {% for task in completed %}
-                        <div class="task">
-                            <h3>{{ task.block_name }}</h3>
-                            <p>{{ task.task_name }}</p>
-                            <p class="text-muted small">{{ task.task_description }}</p>
-                            <a href="/task/{{ task.block_id }}/{{ task.task_id }}" class="task-link">Просмотр</a>
+                            {# Сортируем блоки по block_id #}
+                            {% set sorted_blocks = blocks.items()|sort(attribute='1.block_id') %}
+
+                            {% for block_name, block_data in sorted_blocks %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ loop.index }}">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="true" aria-controls="collapse{{ loop.index }}">
+                                        <i class="fas fa-folder me-2"></i>
+                                        {{ block_name }}
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="heading{{ loop.index }}" data-bs-parent="#tasksAccordion">
+                                    <div class="accordion-body">
+                                        {% for task in block_data['tasks'] %}
+                                        <div class="task">
+                                            <h3>{{ task.task_name }}</h3>
+                                            <p class="text-muted small">{{ task.task_description }}</p>
+                                            <div class="task-actions">
+                                                <span class="badge bg-{{ 'success' if task.status == 'completed' else 'warning' if task.status == 'in_progress' else 'secondary' }}">
+                                                    <i class="fas fa-{{ 'check' if task.status == 'completed' else 'clock' if task.status == 'in_progress' else 'hourglass-start' }} me-1"></i>
+                                                    {{ "Завершено" if task.status == "completed" else "В процессе" if task.status == "in_progress" else "Не начато" }}
+                                                </span>
+                                                <a href="/task/{{ task.block_id }}/{{ task.task_id }}" class="task-link">
+                                                    <i class="fas fa-{{ 'eye' if task.status == 'completed' else 'play' if task.status == 'not_started' else 'redo' }}"></i>
+                                                    {{ "Просмотр" if task.status == "completed" else "Начать" if task.status == "not_started" else "Продолжить" }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
                 </div>
             </div>

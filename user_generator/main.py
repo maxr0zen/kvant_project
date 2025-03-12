@@ -47,9 +47,9 @@ def create_user(last_name, first_name, group):
 
 # Пример использования
 if __name__ == "__main__":
-    last_name = "Толян"
-    first_name = "Карпов"
-    group = "ИТ2-15"
+    last_name = "Учитель" 
+    first_name = "Учительский"
+    group = "superuser"
 
     # Получаем логин, пароль и ID
     login, password, user_id = create_user(last_name, first_name, group)
